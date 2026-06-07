@@ -1,0 +1,207 @@
+﻿@page
+@model Hotel.Web.Pages.Reports.IndexModel
+
+<link rel="stylesheet" href="~/css/reports.css" />
+
+<h2>财务报表</h2>
+
+<!-- 概览卡片 -->
+<div class="summary-cards">
+    <div class="summary-card">
+        <div class="card-label">今日收入</div>
+        <div class="card-value">¥@Model.Summary.TodayRevenue.ToString("F2")</div>
+    </div>
+    <div class="summary-card">
+        <div class="card-label">本月收入</div>
+        <div class="card-value">¥@Model.Summary.ThisMonthRevenue.ToString("F2")</div>
+    </div>
+    <div class="summary-card">
+        <div class="card-label">累计总收入</div>
+        <div class="card-value">¥@Model.Summary.TotalRevenue.ToString("F2")</div>
+    </div>
+    <div class="summary-card">
+        <div class="card-label">今日入住</div>
+        <div class="card-value">@Model.Summary.TodayCheckIns 间</div>
+    </div>
+    <div class="summary-card">
+        <div class="card-label">今日退房</div>
+        <div class="card-value">@Model.Summary.TodayCheckOuts 间</div>
+    </div>
+    <div class="summary-card">
+        <div class="card-label">当前入住</div>
+        <div class="card-value">@Model.Summary.CurrentOccupied / @Model.Summary.TotalRooms</div>
+    </div>
+    <div class="summary-card">
+        <div class="card-label">入住率</div>
+        <div class="card-value">@Model.Summary.OccupancyRate%</div>
+    </div>
+</div>
+
+<!-- 标签切换 -->
+<div class="report-tabs">
+    <a asp-page="/Reports/Index" asp-route-mode="daily" asp-route-reportDate="@Model.ReportDate.ToString("yyyy-MM-dd")"
+       class="tab @(Model.ReportMode == "daily" ? "tab-active" : "")">📅 日报</a>
+    <a asp-page="/Reports/Index" asp-route-mode="weekly" asp-route-reportDate="@Model.ReportDate.ToString("yyyy-MM-dd")"
+       class="tab @(Model.ReportMode == "weekly" ? "tab-active" : "")">📆 周报</a>
+    <a asp-page="/Reports/Index" asp-route-mode="monthly" asp-route-reportDate="@Model.ReportDate.ToString("yyyy-MM-dd")"
+       class="tab @(Model.ReportMode == "monthly" ? "tab-active" : "")">📊 月报</a>
+</div>
+
+<!-- 日报 -->
+@if (Model.ReportMode == "daily" && Model.DailyReport != null)
+{
+    <div class="report-section">
+        <form method="get" class="report-date-form" id="dailyForm">
+            <input type="hidden" name="mode" value="daily" />
+            <label>选择日期</label>
+            <input type="date" name="reportDate" class="form-control date-input"
+                   value="@Model.ReportDate.ToString("yyyy-MM-dd")"
+                   onchange="this.form.submit()" />
+        </form>
+
+        <table class="table table-bordered report-table">
+            <tr>
+                <th>日期</th>
+                <td><b>@Model.DailyReport.Date.ToString("yyyy-MM-dd")</b></td>
+                <th>入住数</th>
+                <td>@Model.DailyReport.CheckIns 间</td>
+                <th>退房数</th>
+                <td>@Model.DailyReport.CheckOuts 间</td>
+            </tr>
+            <tr>
+                <th>新预订</th>
+                <td>@Model.DailyReport.NewBookings 单</td>
+                <th>房费收入</th>
+                <td class="money">¥@Model.DailyReport.RoomRevenue.ToString("F2")</td>
+                <th>入住率</th>
+                <td>@Model.DailyReport.OccupancyRate%</td>
+            </tr>
+        </table>
+    </div>
+}
+
+<!-- 周报 -->
+@if (Model.ReportMode == "weekly" && Model.WeeklyReport != null)
+{
+    <div class="report-section">
+        <form method="get" class="report-date-form" id="weeklyForm">
+            <input type="hidden" name="mode" value="weekly" />
+            <label>选择周</label>
+            <input type="date" name="reportDate" class="form-control date-input"
+                   value="@Model.ReportDate.ToString("yyyy-MM-dd")"
+                   onchange="this.form.submit()" />
+        </form>
+
+        <div class="week-summary">
+            <div class="week-stat">
+                <span class="stat-label">统计周期</span>
+                <span class="stat-value">@Model.WeeklyReport.WeekStart.ToString("MM-dd") ~ @Model.WeeklyReport.WeekEnd.ToString("MM-dd")</span>
+            </div>
+            <div class="week-stat">
+                <span class="stat-label">订单数</span>
+                <span class="stat-value">@Model.WeeklyReport.TotalOrders 单</span>
+            </div>
+            <div class="week-stat">
+                <span class="stat-label">总间夜</span>
+                <span class="stat-value">@Model.WeeklyReport.TotalNights 晚</span>
+            </div>
+            <div class="week-stat">
+                <span class="stat-label">总收入</span>
+                <span class="stat-value money">¥@Model.WeeklyReport.TotalRevenue.ToString("F2")</span>
+            </div>
+        </div>
+
+        <table class="table table-bordered report-table">
+            <thead class="table-light">
+                <tr>
+                    <th>日期</th>
+                    <th>星期</th>
+                    <th>入住</th>
+                    <th>退房</th>
+                    <th>新预订</th>
+                    <th>收入</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var day in Model.WeeklyReport.DailyDetails)
+                {
+                    <tr>
+                        <td>@day.Date.ToString("MM-dd")</td>
+                        <td>@(day.Date.DayOfWeek switch {
+                            DayOfWeek.Monday => "周一", DayOfWeek.Tuesday => "周二",
+                            DayOfWeek.Wednesday => "周三", DayOfWeek.Thursday => "周四",
+                            DayOfWeek.Friday => "周五", DayOfWeek.Saturday => "周六",
+                            _ => "周日" })</td>
+                        <td>@day.CheckIns</td>
+                        <td>@day.CheckOuts</td>
+                        <td>@day.NewBookings</td>
+                        <td class="money">¥@day.RoomRevenue.ToString("F2")</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr class="table-info">
+                    <td colspan="2"><b>合计</b></td>
+                    <td><b>@Model.WeeklyReport.DailyDetails.Sum(d => d.CheckIns)</b></td>
+                    <td><b>@Model.WeeklyReport.DailyDetails.Sum(d => d.CheckOuts)</b></td>
+                    <td><b>@Model.WeeklyReport.DailyDetails.Sum(d => d.NewBookings)</b></td>
+                    <td><b class="money">¥@Model.WeeklyReport.DailyDetails.Sum(d => d.RoomRevenue).ToString("F2")</b></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <h5 style="margin-top:16px; color:#555;">房型收入分布</h5>
+        <table class="table table-bordered" style="width:auto;">
+            <tr>
+                <th>单间</th>
+                <td class="money">¥@Model.WeeklyReport.SingleRevenue.ToString("F2")</td>
+            </tr>
+            <tr>
+                <th>标间</th>
+                <td class="money">¥@Model.WeeklyReport.DoubleRevenue.ToString("F2")</td>
+            </tr>
+            <tr>
+                <th>套房</th>
+                <td class="money">¥@Model.WeeklyReport.SuiteRevenue.ToString("F2")</td>
+            </tr>
+        </table>
+    </div>
+}
+
+<!-- 月报 -->
+@if (Model.ReportMode == "monthly")
+{
+    <div class="report-section">
+        <table class="table table-bordered table-hover report-table">
+            <thead class="table-light">
+                <tr>
+                    <th>月份</th>
+                    <th>订单数</th>
+                    <th>总间夜</th>
+                    <th>单间收入</th>
+                    <th>标间收入</th>
+                    <th>套房收入</th>
+                    <th>总收入</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var m in Model.MonthlyReports)
+                {
+                    <tr>
+                        <td><b>@m.Year-@m.Month.ToString("D2")</b></td>
+                        <td>@m.TotalOrders 单</td>
+                        <td>@m.TotalNights 晚</td>
+                        <td class="money">¥@m.SingleRevenue.ToString("F2")</td>
+                        <td class="money">¥@m.DoubleRevenue.ToString("F2")</td>
+                        <td class="money">¥@m.SuiteRevenue.ToString("F2")</td>
+                        <td><b class="money">¥@m.TotalRevenue.ToString("F2")</b></td>
+                    </tr>
+                }
+                @if (Model.MonthlyReports.Count == 0)
+                {
+                    <tr><td colspan="7" class="text-center text-muted">暂无数据</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

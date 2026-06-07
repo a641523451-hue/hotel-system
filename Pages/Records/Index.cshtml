@@ -1,0 +1,51 @@
+﻿@page
+@model Hotel.Web.Pages.Records.IndexModel
+
+<link rel="stylesheet" href="~/css/records.css" />
+
+<h2>操作记录</h2>
+
+<form method="get" class="row g-3 mb-3">
+    <div class="col-auto">
+        <label class="form-label">开始日期</label>
+        <input type="date" name="startDate" class="form-control" value="@Model.StartDate?.ToString("yyyy-MM-dd")" />
+    </div>
+    <div class="col-auto">
+        <label class="form-label">结束日期</label>
+        <input type="date" name="endDate" class="form-control" value="@Model.EndDate?.ToString("yyyy-MM-dd")" />
+    </div>
+    <div class="col-auto">
+        <label class="form-label">房号</label>
+        <input type="text" name="roomFilter" class="form-control" placeholder="全部" value="@Model.RoomFilter" />
+    </div>
+    <div class="col-auto" style="padding-top:32px;">
+        <button type="submit" class="btn btn-primary">查询</button>
+        <a asp-page="/Records/Index" class="btn btn-outline-secondary">重置</a>
+    </div>
+</form>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-light">
+        <tr>
+            <th>时间</th>
+            <th>操作内容</th>
+            <th>房号</th>
+            <th>操作人</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var log in Model.AuditLogs)
+        {
+            <tr>
+                <td>@log.Time.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                <td>@log.Action</td>
+                <td><b>@log.RoomNumber</b></td>
+                <td>@log.Operator</td>
+            </tr>
+        }
+        @if (Model.AuditLogs.Count == 0)
+        {
+            <tr><td colspan="4" class="text-center text-muted">暂无记录</td></tr>
+        }
+    </tbody>
+</table>

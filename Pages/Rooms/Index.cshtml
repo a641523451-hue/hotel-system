@@ -1,0 +1,126 @@
+﻿@page
+@model Hotel.Web.Pages.Rooms.IndexModel
+
+<link rel="stylesheet" href="~/css/rooms.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<div id="current-time"></div>
+
+<h2>房间状态</h2>
+
+@functions {
+    string GetClass(string status, string cleanStatus)
+    {
+        if (status == "Available" && cleanStatus == "Dirty")
+            return "room-dirty";
+        return status switch
+        {
+            "Available" => "room-available",
+            "Booked" => "room-booked",
+            "Occupied" => "room-occupied",
+            _ => "room-available"
+        };
+    }
+}
+
+<div class="room-grid">
+    @foreach (var room in Model.Rooms)
+    {
+        var cls = GetClass(room.Status, room.CleanStatus);
+
+        <div class="room-card @cls" data-room="@room.RoomNumber" data-price="@room.Price"
+             data-status="@room.Status" data-cleanstatus="@room.CleanStatus">
+            <div class="room-number">@room.RoomNumber</div>
+            <div class="room-type">@room.TypeDisplay</div>
+            <div class="room-price">¥@room.Price</div>
+            <div class="room-status">@room.StatusDisplay</div>
+            <div class="room-clean">@room.CleanStatusDisplay</div>
+        </div>
+    }
+</div>
+
+<!-- 遮罩 -->
+<div id="overlay" class="overlay"></div>
+
+<!-- 弹窗 -->
+<div id="roomModal" class="modal">
+    <span class="close">&times;</span>
+    <h3 id="modalRoomNumber"></h3>
+
+    <!-- 操作按钮 -->
+    <div class="action-bar" id="actionBar">
+        <button class="modal-btn btn-book" onclick="setAction('Book')">📅 预定</button>
+        <button class="modal-btn btn-checkin" onclick="setAction('CheckIn')">🏠 入住</button>
+        <button class="modal-btn btn-checkout" onclick="setAction('CheckOut')">💰 退房</button>
+        <button class="modal-btn btn-cancel" onclick="setAction('CancelBooking')">❌ 取消</button>
+        <button class="modal-btn btn-clean" onclick="setAction('MarkClean')">🧹 标记清洁</button>
+    </div>
+
+    <form id="actionForm">
+        <input type="hidden" name="roomNumber" id="roomNumber" />
+        <input type="hidden" name="action" id="actionType" />
+
+        <div class="form-group" id="nameGroup">
+            <label>姓名 <span class="required">*</span></label>
+            <input name="customerName" class="form-control" />
+        </div>
+
+        <div class="form-group" id="phoneGroup">
+            <label>电话</label>
+            <input name="customerPhone" class="form-control" />
+        </div>
+
+        <div class="form-group" id="checkInGroup">
+            <label>入住日期</label>
+            <input id="checkIn" name="checkInDate" class="form-control" />
+        </div>
+
+        <div class="form-group" id="checkOutGroup">
+            <label>离店日期</label>
+            <input id="checkOut" name="checkOutDate" class="form-control" />
+        </div>
+
+        <div class="form-group" id="priceGroup">
+            <label>单价 (元/晚)</label>
+            <input id="price" name="price" class="form-control" />
+        </div>
+
+        <div class="form-group" id="nightsGroup">
+            <label>入住几晚</label>
+            <input id="nights" name="nights" class="form-control" />
+        </div>
+
+        <div class="form-group" id="totalGroup">
+            <label>总价 (元)</label>
+            <input id="total" class="form-control" readonly />
+        </div>
+
+        <div class="form-group" id="prepaidGroup">
+            <label>预付金 (元)</label>
+            <input id="prepaid" name="prepaid" class="form-control" value="0" />
+        </div>
+
+        <!-- 退房账单显示区 -->
+        <div id="billSummary" style="display:none; background:#f8f9fa; border-radius:8px; padding:12px; margin-top:10px;">
+            <h4 style="margin:0 0 8px 0; color:#2c3e50;">🧾 退房账单</h4>
+            <table style="width:100%; font-size:14px;">
+                <tr><td style="padding:4px 0; color:#555;">客户</td><td style="text-align:right;" id="billName"></td></tr>
+                <tr><td style="padding:4px 0; color:#555;">电话</td><td style="text-align:right;" id="billPhone"></td></tr>
+                <tr><td style="padding:4px 0; color:#555;">入住时间</td><td style="text-align:right;" id="billCheckIn"></td></tr>
+                <tr><td style="padding:4px 0; color:#555;">退房时间</td><td style="text-align:right;" id="billCheckOut"></td></tr>
+                <tr><td style="padding:4px 0; color:#555;">单价</td><td style="text-align:right;" id="billPrice"></td></tr>
+                <tr><td style="padding:4px 0; color:#555;">入住</td><td style="text-align:right;" id="billNights"></td></tr>
+                <tr style="border-top:1px solid #ddd;"><td style="padding:6px 0; font-weight:bold;">总价</td><td style="text-align:right; font-weight:bold;" id="billTotal"></td></tr>
+                <tr><td style="padding:4px 0; color:green;">已付</td><td style="text-align:right; color:green;" id="billPaid"></td></tr>
+                <tr><td style="padding:4px 0; color:red; font-weight:bold;">需补交</td><td style="text-align:right; color:red; font-weight:bold;" id="billDue"></td></tr>
+            </table>
+        </div>
+
+        <button type="submit" class="modal-btn btn-confirm" id="confirmBtn">确认</button>
+    </form>
+</div>
+
+@Html.AntiForgeryToken()
+
+<script src="~/js/rooms.js"></script>

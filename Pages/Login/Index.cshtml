@@ -1,0 +1,31 @@
+﻿@page
+@model Hotel.Web.Pages.Login.IndexModel
+@{
+    ViewData["Title"] = "登录";
+}
+<link rel="stylesheet" href="~/css/login.css" />
+
+<div class="login-wrapper">
+    <div class="login-card">
+        <h2>酒店管理系统</h2>
+        <p class="subtitle">请登录以继续</p>
+
+        <form method="post">
+            <div class="form-group">
+                <label>用户名</label>
+                <input asp-for="Username" class="form-control" autocomplete="username" />
+            </div>
+            <div class="form-group">
+                <label>密码</label>
+                <input asp-for="Password" type="password" class="form-control" autocomplete="current-password" />
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="alert alert-danger">@Model.ErrorMessage</div>
+            }
+
+            <button type="submit" class="btn btn-primary login-btn">登 录</button>
+        </form>
+    </div>
+</div>

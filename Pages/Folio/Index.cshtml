@@ -1,0 +1,73 @@
+﻿@page
+@model Hotel.Web.Pages.Folio.IndexModel
+
+<link rel="stylesheet" href="~/css/folio.css" />
+<h2>账单查询</h2>
+
+<form method="get" class="row g-3 mb-3">
+    <div class="col-auto">
+        <input type="text" name="keyword" class="form-control" placeholder="房号 / 姓名 / 电话" value="@Model.Keyword" />
+    </div>
+    <div class="col-auto">
+        <select name="statusFilter" class="form-control">
+            <option value="">全部状态</option>
+            <option value="Booked" selected="@(Model.StatusFilter == "Booked")">已预订</option>
+            <option value="CheckedIn" selected="@(Model.StatusFilter == "CheckedIn")">入住中</option>
+            <option value="Completed" selected="@(Model.StatusFilter == "Completed")">已完成</option>
+            <option value="Cancelled" selected="@(Model.StatusFilter == "Cancelled")">已取消</option>
+        </select>
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">查询</button>
+    </div>
+</form>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-light">
+        <tr>
+            <th>房号</th>
+            <th>客户</th>
+            <th>电话</th>
+            <th>入住</th>
+            <th>退房</th>
+            <th>总金额</th>
+            <th>已付</th>
+            <th>欠款</th>
+            <th>状态</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var o in Model.Orders)
+        {
+            <tr>
+                <td><b>@o.RoomNumber</b></td>
+                <td>@o.CustomerName</td>
+                <td>@o.CustomerPhone</td>
+                <td>@(o.ActualCheckInTime?.ToString("MM-dd HH:mm") ?? o.PromisedCheckIn.ToString("MM-dd"))</td>
+                <td>@(o.ActualCheckOutTime?.ToString("MM-dd HH:mm") ?? o.PromisedCheckOut.ToString("MM-dd"))</td>
+                <td>¥@o.TotalAmount.ToString("F2")</td>
+                <td>¥@o.PaidAmount.ToString("F2")</td>
+                <td style="color:@(o.OutstandingAmount > 0 ? "red" : "green");font-weight:bold">
+                    ¥@o.OutstandingAmount.ToString("F2")
+                </td>
+                <td>
+                    @switch (o.Status)
+                    {
+                        case "Booked": <span class="badge bg-warning">已预订</span>; break;
+                        case "CheckedIn": <span class="badge bg-primary">入住中</span>; break;
+                        case "Completed": <span class="badge bg-success">已完成</span>; break;
+                        case "Cancelled": <span class="badge bg-secondary">已取消</span>; break;
+                    }
+                </td>
+                <td>
+                    <a class="btn btn-sm btn-outline-info" asp-page="/Folio/Details" asp-route-id="@o.Id">详情</a>
+                </td>
+            </tr>
+        }
+        @if (Model.Orders.Count == 0)
+        {
+            <tr><td colspan="10" class="text-center text-muted">暂无记录</td></tr>
+        }
+    </tbody>
+</table>

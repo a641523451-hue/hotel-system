@@ -1,0 +1,145 @@
+﻿@page "{id:int}"
+@model Hotel.Web.Pages.Folio.DetailsModel
+
+<link rel="stylesheet" href="~/css/folio.css" />
+<h2>账单详情</h2>
+
+@if (Model.Order == null)
+{
+    <p>未找到订单</p>
+}
+else
+{
+    <div class="folio-detail">
+        <div class="folio-info">
+            <h4>订单信息</h4>
+            <table class="info-table">
+                <tr><td>房号</td><td><b>@Model.Order.RoomNumber</b></td></tr>
+                <tr><td>客户</td><td><b>@Model.Order.CustomerName</b></td></tr>
+                <tr><td>电话</td><td>@Model.Order.CustomerPhone</td></tr>
+                <tr><td>状态</td><td>
+                    @switch (Model.Order.Status)
+                    {
+                        case "Booked": <span class="badge bg-warning">已预订</span>; break;
+                        case "CheckedIn": <span class="badge bg-primary">入住中</span>; break;
+                        case "Completed": <span class="badge bg-success">已完成</span>; break;
+                        case "Cancelled": <span class="badge bg-secondary">已取消</span>; break;
+                    }
+                </td></tr>
+            </table>
+
+            <h4 style="margin-top:16px;">时间信息</h4>
+            <table class="info-table">
+                <tr><td>预订入住</td><td>@Model.Order.PromisedCheckIn.ToString("yyyy-MM-dd")</td></tr>
+                <tr><td>预订离店</td><td>@Model.Order.PromisedCheckOut.ToString("yyyy-MM-dd")</td></tr>
+                @if (Model.Order.ActualCheckInTime.HasValue)
+                {
+                    <tr><td>实际入住</td><td>@Model.Order.ActualCheckInTime.Value.ToString("yyyy-MM-dd HH:mm")</td></tr>
+                }
+                @if (Model.Order.ActualCheckOutTime.HasValue)
+                {
+                    <tr><td>实际退房</td><td>@Model.Order.ActualCheckOutTime.Value.ToString("yyyy-MM-dd HH:mm")</td></tr>
+                }
+                <tr><td>天数</td><td>@Model.Order.Nights 晚</td></tr>
+            </table>
+
+            <h4 style="margin-top:16px;">财务信息</h4>
+            <table class="info-table">
+                <tr><td>单价</td><td>¥@Model.Order.UnitPrice.ToString("F2")</td></tr>
+                <tr><td>总金额</td><td>¥@Model.Order.TotalAmount.ToString("F2")</td></tr>
+                <tr><td>已付款</td><td style="color:green">¥@Model.Order.PaidAmount.ToString("F2")</td></tr>
+                <tr><td>欠款</td>
+                    <td style="color:@(Model.Order.OutstandingAmount > 0 ? "red" : "green");font-weight:bold">
+                        ¥@Model.Order.OutstandingAmount.ToString("F2")
+                    </td>
+                </tr>
+                <tr><td>结算状态</td>
+                    <td>
+                        @if (Model.Order.OutstandingAmount <= 0)
+                        {
+                            <span class="badge bg-success">已结清</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">未结清</span>
+                        }
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="folio-payments">
+            <h4>收款记录</h4>
+            @if (Model.Payments.Count == 0)
+            {
+                <p class="text-muted">暂无收款记录</p>
+            }
+            else
+            {
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>时间</th>
+                            <th>金额</th>
+                            <th>方式</th>
+                            <th>备注</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in Model.Payments)
+                        {
+                            <tr>
+                                <td>@p.PaidTime.ToString("MM-dd HH:mm")</td>
+                                <td>¥@p.Amount.ToString("F2")</td>
+                                <td>@(p.Method switch {
+                                    "Cash" => "现金",
+                                    "Card" => "银行卡",
+                                    "Alipay" => "支付宝",
+                                    "WeChat" => "微信",
+                                    _ => p.Method
+                                })</td>
+                                <td>@p.Remark</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+
+            @if (Model.Order.Status != "Cancelled" && Model.Order.OutstandingAmount > 0)
+            {
+                <hr />
+                <h5>收款</h5>
+                <form method="post" asp-page-handler="Pay" class="pay-form">
+                    <input type="hidden" name="id" value="@Model.Order.Id" />
+
+                    <div class="form-group">
+                        <label>收款金额 (元)</label>
+                        <input type="number" name="amount" step="0.01" class="form-control"
+                               value="@Model.Order.OutstandingAmount" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>支付方式</label>
+                        <select name="method" class="form-control">
+                            <option value="Cash">现金</option>
+                            <option value="Card">银行卡</option>
+                            <option value="Alipay">支付宝</option>
+                            <option value="WeChat">微信</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>备注</label>
+                        <input name="remark" class="form-control" placeholder="可选" />
+                    </div>
+
+                    <button type="submit" class="btn btn-success">确认收款</button>
+                </form>
+            }
+            else if (Model.Order.OutstandingAmount <= 0 && Model.Order.Status != "Cancelled")
+            {
+                <p style="color:green;font-size:16px;">✔ 该订单已结清</p>
+            }
+        </div>
+    </div>
+}

@@ -1,0 +1,32 @@
+﻿# .NET build outputs
+bin/
+obj/
+publish/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.sln.docstates
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Database - SQLite runtime files
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+Data/
+
+# Delivery packages
+dist/
+
+# Development settings
+appsettings.Development.json
+
+# OS files
+Thumbs.db
+.DS_Store

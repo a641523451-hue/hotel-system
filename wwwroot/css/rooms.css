@@ -1,0 +1,221 @@
+﻿/* =========================
+   实时时钟
+========================= */
+#current-time {
+    display: inline-block;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white !important;
+    border-radius: 50px;
+    font-size: 1.6em;
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+    margin-bottom: 20px;
+}
+
+/* =========================
+   房间网格
+========================= */
+.room-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* =========================
+   房间卡片
+========================= */
+.room-card {
+    border-radius: 12px;
+    padding: 18px 12px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    transition: 0.25s;
+    cursor: pointer;
+    text-align: center;
+    color: white;
+    position: relative;
+}
+
+.room-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+.room-card .room-number {
+    font-size: 1.8em;
+    font-weight: 700;
+}
+
+.room-card .room-type {
+    font-size: 0.85em;
+    opacity: 0.9;
+    margin-top: 2px;
+}
+
+.room-card .room-price {
+    font-size: 1.1em;
+    font-weight: 600;
+    margin-top: 4px;
+}
+
+.room-card .room-status {
+    font-size: 0.85em;
+    margin-top: 4px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+}
+
+.room-card .room-clean {
+    font-size: 0.75em;
+    margin-top: 6px;
+    opacity: 0.85;
+}
+
+/* =========================
+   房态颜色
+========================= */
+.room-available {
+    background: linear-gradient(135deg, #2ecc71, #27ae60);
+}
+
+.room-occupied {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.room-booked {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: white;
+}
+
+.room-dirty {
+    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+    border: 2px dashed #e74c3c;
+}
+
+/* =========================
+   遮罩层
+========================= */
+.overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+}
+
+/* =========================
+   弹窗
+========================= */
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    width: 420px;
+    max-width: 90vw;
+    border-radius: 14px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+    z-index: 1001;
+    padding: 24px;
+}
+
+#modalRoomNumber {
+    text-align: center;
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+
+/* =========================
+   操作按钮区
+========================= */
+.action-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.modal-btn {
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.2s;
+    opacity: 0.6;
+}
+
+.modal-btn:hover {
+    transform: translateY(-2px);
+    opacity: 1 !important;
+}
+
+.btn-book { background: #2ecc71; }
+.btn-checkin { background: #3498db; }
+.btn-checkout { background: #e67e22; }
+.btn-cancel { background: #e74c3c; }
+.btn-clean { background: #95a5a6; }
+.btn-confirm {
+    background: #3498db;
+    opacity: 1;
+    width: 100%;
+    font-size: 16px;
+    padding: 12px;
+    margin-top: 10px;
+}
+
+/* =========================
+   表单
+========================= */
+.form-group {
+    margin-bottom: 12px;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(52,152,219,0.2);
+}
+
+.form-control[readonly] {
+    background: #f9f9f9;
+    color: #666;
+}
+
+/* 关闭按钮 */
+.close {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #999;
+}
+
+.close:hover {
+    color: #333;
+}

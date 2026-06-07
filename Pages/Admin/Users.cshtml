@@ -1,0 +1,94 @@
+﻿@page
+@model Hotel.Web.Pages.Admin.UsersModel
+
+<link rel="stylesheet" href="~/css/admin.css" />
+
+<h2>⚙️ 账号管理</h2>
+
+<ul class="admin-tabs">
+    <li><a asp-page="/Admin/Index">房间管理</a></li>
+    <li class="tab-active"><a asp-page="/Admin/Users">账号管理</a></li>
+</ul>
+
+@if (Model.SaveSuccess)
+{
+    <div class="alert alert-success">✅ 密码已修改</div>
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">❌ @Model.ErrorMessage</div>
+}
+
+<h4>修改账号密码</h4>
+<table class="table table-bordered">
+    <thead class="table-light">
+        <tr>
+            <th>用户名</th>
+            <th>角色</th>
+            <th>新密码</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model.Users)
+        {
+            <tr>
+                <td><b>@user.Username</b></td>
+                <td>@(user.Role == 1 ? "🔴 管理员" : "⚪ 前台")</td>
+                <td>
+                    <input type="password" class="form-control" id="pwd_@user.Id"
+                           placeholder="输入新密码" style="width:200px;" />
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-warning" onclick="changePwd(@user.Id, '@user.Username')">修改密码</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<hr />
+<h4>添加新账号</h4>
+<form method="post" asp-page-handler="AddUser">
+    <div class="row g-3">
+        <div class="col-auto">
+            <input name="username" class="form-control" placeholder="用户名" required />
+        </div>
+        <div class="col-auto">
+            <input name="password" type="password" class="form-control" placeholder="密码" required />
+        </div>
+        <div class="col-auto">
+            <select name="role" class="form-control">
+                <option value="0">前台</option>
+                <option value="1">管理员</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">添加账号</button>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        function changePwd(id, username) {
+            var pwd = document.getElementById('pwd_' + id).value;
+            if (!pwd || pwd.length < 3) {
+                alert('密码至少3位');
+                return;
+            }
+            if (!confirm('确认修改 ' + username + ' 的密码为 "' + pwd + '" 吗？')) return;
+
+            fetch('?handler=ChangePwd&id=' + id + '&newPwd=' + encodeURIComponent(pwd), {
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                }
+            }).then(r => r.json()).then(r => {
+                if (r.success) location.reload();
+                else alert('修改失败');
+            });
+        }
+    </script>
+}

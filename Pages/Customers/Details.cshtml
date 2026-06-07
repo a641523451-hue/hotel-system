@@ -1,0 +1,61 @@
+﻿@page "{name}"
+@model Hotel.Web.Pages.Customers.DetailsModel
+
+<link rel="stylesheet" href="~/css/customers.css" />
+
+<h2>客户详情</h2>
+
+@if (Model.Customer != null)
+{
+    <div class="customer-info">
+        <div class="customer-summary">
+            <table class="info-table">
+                <tr><td>姓名</td><td><b>@Model.Customer.CustomerName</b></td></tr>
+                <tr><td>电话</td><td>@Model.Customer.CustomerPhone</td></tr>
+                <tr><td>入住次数</td><td>@Model.Customer.TotalStays 次</td></tr>
+                <tr><td>累计消费</td><td>¥@Model.Customer.TotalSpending.ToString("F2")</td></tr>
+            </table>
+        </div>
+
+        <h4 style="margin-top:20px;">历史订单</h4>
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>房号</th>
+                    <th>入住</th>
+                    <th>退房</th>
+                    <th>金额</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var o in Model.Customer.Orders)
+                {
+                    <tr>
+                        <td><b>@o.RoomNumber</b></td>
+                        <td>@(o.ActualCheckInTime?.ToString("yyyy-MM-dd") ?? o.PromisedCheckIn.ToString("yyyy-MM-dd"))</td>
+                        <td>@(o.ActualCheckOutTime?.ToString("yyyy-MM-dd") ?? o.PromisedCheckOut.ToString("yyyy-MM-dd"))</td>
+                        <td>¥@o.TotalAmount.ToString("F2")</td>
+                        <td>
+                            @switch (o.Status)
+                            {
+                                case "Booked": <span class="badge bg-warning">已预订</span>; break;
+                                case "CheckedIn": <span class="badge bg-primary">入住中</span>; break;
+                                case "Completed": <span class="badge bg-success">已完成</span>; break;
+                                case "Cancelled": <span class="badge bg-secondary">已取消</span>; break;
+                            }
+                        </td>
+                        <td>
+                            <a class="btn btn-sm btn-outline-info" asp-page="/Folio/Details" asp-route-id="@o.Id">账单</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <p class="text-muted">未找到客户信息</p>
+}

@@ -1,0 +1,48 @@
+﻿@page
+@model Hotel.Web.Pages.Customers.IndexModel
+
+<link rel="stylesheet" href="~/css/customers.css" />
+
+<h2>客户档案</h2>
+
+<form method="get" class="row g-3 mb-3">
+    <div class="col-auto">
+        <input type="text" name="keyword" class="form-control" placeholder="姓名 / 电话" value="@Model.Keyword" />
+    </div>
+    <div class="col-auto" style="padding-top:2px;">
+        <button type="submit" class="btn btn-primary">查询</button>
+        <a asp-page="/Customers/Index" class="btn btn-outline-secondary">全部</a>
+    </div>
+</form>
+
+<table class="table table-bordered table-hover">
+    <thead class="table-light">
+        <tr>
+            <th>姓名</th>
+            <th>电话</th>
+            <th>入住次数</th>
+            <th>累计消费</th>
+            <th>最近入住</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var c in Model.Customers)
+        {
+            <tr>
+                <td><b>@c.CustomerName</b></td>
+                <td>@c.CustomerPhone</td>
+                <td>@c.TotalStays 次</td>
+                <td>¥@c.TotalSpending.ToString("F2")</td>
+                <td>@c.LastStay?.ToString("yyyy-MM-dd")</td>
+                <td>
+                    <a class="btn btn-sm btn-outline-info" asp-page="/Customers/Details" asp-route-name="@c.CustomerName">详情</a>
+                </td>
+            </tr>
+        }
+        @if (Model.Customers.Count == 0)
+        {
+            <tr><td colspan="6" class="text-center text-muted">暂无客户记录</td></tr>
+        }
+    </tbody>
+</table>

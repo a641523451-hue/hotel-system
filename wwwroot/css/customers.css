@@ -1,0 +1,28 @@
+﻿/* =========================
+   客户档案样式
+========================= */
+.customer-info {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 20px;
+}
+
+.customer-summary {
+    margin-bottom: 16px;
+}
+
+.info-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.info-table td {
+    padding: 8px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.info-table td:first-child {
+    color: #7f8c8d;
+    width: 120px;
+}
