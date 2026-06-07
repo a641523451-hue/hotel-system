@@ -54,7 +54,6 @@ hotel-system/
 ├── appsettings.json            # 配置（数据库连接字符串）
 ├── start.bat                   # 开发启动脚本
 ├── Hotel.web.csproj            # 项目文件
-└── 酒店管理系统_安装包.zip     # 发给客户的包
 ```
 
 ## 角色权限
@@ -73,21 +72,6 @@ hotel-system/
 2. Program.cs 改 `UseSqlServer`
 3. appsettings.json 改连接字符串
 
-## 常用命令
-
-```bash
-# 运行（开发）
-dotnet run --urls "http://0.0.0.0:5001"
-
-# 构建
-dotnet build
-
-# 发布（自包含，发给客户）
-dotnet publish -c Release -r win-x64 --self-contained true -o dist/酒店管理系统
-
-# 添加 NuGet 包
-dotnet add package 包名
-```
 
 ## 默认账号
 
@@ -111,8 +95,4 @@ dotnet add package 包名
 | `/Admin/Users` | 系统设置-账号管理 | Admin |
 | `/Records/Index` | 操作记录 | 登录用户 |
 
-## 部署
 
-详见 `start.bat` 或 `README_deploy.txt`。
-
-交付包位置：`dist/酒店管理系统_安装包.zip`
