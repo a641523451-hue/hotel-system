@@ -1,8 +1,12 @@
 
-                局域网内的中小酒店管理系统
+局域网内的中小酒店管理系统
+<img width="1982" height="901" alt="image" src="https://github.com/user-attachments/assets/a8a77507-f568-4927-9468-fec30bfd2004" />
 
-<img width="2078" height="1154" alt="image" src="https://github.com/user-attachments/assets/06af37eb-d214-40ed-b4b1-27d8f119d11f" />
-﻿ 
+<img width="629" height="1162" alt="image" src="https://github.com/user-attachments/assets/c23b345f-c2d9-4074-b1f8-5901f7855d01" />
+
+<img width="633" height="678" alt="image" src="https://github.com/user-attachments/assets/fa4c15c6-d701-488f-8b91-8343a261a431" />
+
+<img width="1948" height="558" alt="image" src="https://github.com/user-attachments/assets/a41093f3-9dd5-4ed4-aace-d3c80a2c1df3" />
 
 ## 技术栈
 
