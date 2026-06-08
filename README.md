@@ -1,5 +1,5 @@
 
-局域网内的中小酒店管理系统
+                局域网内的中小酒店管理系统
 
 <img width="2078" height="1154" alt="image" src="https://github.com/user-attachments/assets/06af37eb-d214-40ed-b4b1-27d8f119d11f" />
 ﻿ 
